@@ -1,0 +1,81 @@
+---
+title: "Hello R Markdown"
+author: "Frida Gomam"
+date: 2015-07-23T21:13:14-05:00
+categories: ["R"]
+tags: ["R Markdown", "plot", "regression"]
+---
+
+
+
+<div id="r-markdown" class="section level2">
+<h2>R Markdown</h2>
+<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
+<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
+<pre class="r"><code>summary(cars)
+##      speed           dist       
+##  Min.   : 4.0   Min.   :  2.00  
+##  1st Qu.:12.0   1st Qu.: 26.00  
+##  Median :15.0   Median : 36.00  
+##  Mean   :15.4   Mean   : 42.98  
+##  3rd Qu.:19.0   3rd Qu.: 56.00  
+##  Max.   :25.0   Max.   :120.00</code></pre>
+</div>
+<div id="including-plots" class="section level2">
+<h2>Including Plots</h2>
+<p>You can also embed plots, for example:</p>
+<p><img src="/post/2020-09-27-r-rmarkdown_files/figure-html/pressure-1.png" width="672" /></p>
+<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+<p>##install packages
+install.packages(“opendatatoronto”)</p>
+<p>##library formulas<br />
+library(ggpubr)
+library(opendatatoronto)
+library(dplyr)
+library(ggplot2)</p>
+</div>
+<div id="get-package" class="section level1">
+<h1>get package</h1>
+<p>package &lt;- show_package(“58efb906-0ba2-4e83-9a2e-a64f03a3d58e”)
+package</p>
+</div>
+<div id="get-all-resources-for-this-package" class="section level1">
+<h1>get all resources for this package</h1>
+<p>resources &lt;- list_package_resources(“58efb906-0ba2-4e83-9a2e-a64f03a3d58e”)</p>
+</div>
+<div id="identify-datastore-resources-by-default-toronto-open-data-sets-datastore-resource-format-to-csv-for-non-geospatial-and-geojson-for-geospatial-resources" class="section level1">
+<h1>identify datastore resources; by default, Toronto Open Data sets datastore resource format to CSV for non-geospatial and GeoJSON for geospatial resources</h1>
+<p>datastore_resources &lt;- filter(resources, tolower(format) %in% c(‘csv’, ‘geojson’))</p>
+</div>
+<div id="load-the-first-datastore-resource-as-a-sample" class="section level1">
+<h1>load the first datastore resource as a sample</h1>
+<p>data &lt;- filter(datastore_resources, row_number()==1) %&gt;% get_resource()
+data</p>
+<p>##a histogram of the clothing drop box location street name</p>
+<p>df &lt;- data.frame(
+address=data$Permit_Address_Street_Name
+)</p>
+<p>ggplot(df, aes(x=address)) + geom_bar(stat=“count”)</p>
+<p>##a frequency table of the clothing drop box location street name
+address=data$Permit_Address_Street_Name
+as.matrix(table(address),row.names = NULL)</p>
+<p>##a histogram of the clothing drop box location street name</p>
+<p>df &lt;- data.frame(
+class=data$Permit_Class
+)</p>
+<p>ggplot(df, aes(x=class)) + geom_bar(stat=“count”)
+class=data$Permit_Class
+##a frequency table of the clothing drop box location street name and permit class
+correlation&lt;-matrix(table(address,class),ncol=2)</p>
+<p>colnames(correlation) &lt;- c(“profit”,“nonprofit”)
+correlation
+##creat a new table with street names</p>
+<p>new&lt;-as.matrix(table(address))[,0]
+COR&lt;-cbind(correlation,new)
+COR</p>
+<p>##plot of street names&amp;permit class correlation
+plot(COR)
+##the street where nonprofit boxes are less than profit boxes</p>
+<p>COR[ (COR[,2]-COR[,1])&lt;=0, ]
+COR[ (COR[,2]-COR[,1])&lt;=-5, ]</p>
+</div>

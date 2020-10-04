@@ -1,0 +1,96 @@
+---
+title: "Hello R Markdown"
+author: "Frida Gomam"
+date: 2015-07-23T21:13:14-05:00
+categories: ["R"]
+tags: ["R Markdown", "plot", "regression"]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+##install packages
+install.packages("opendatatoronto")
+
+
+##library formulas	
+library(ggpubr)	
+library(opendatatoronto)
+library(dplyr)
+library(ggplot2)
+ 
+# get package
+package <- show_package("58efb906-0ba2-4e83-9a2e-a64f03a3d58e")
+package
+ 
+# get all resources for this package
+resources <- list_package_resources("58efb906-0ba2-4e83-9a2e-a64f03a3d58e")
+ 
+# identify datastore resources; by default, Toronto Open Data sets datastore resource format to CSV for non-geospatial and GeoJSON for geospatial resources
+datastore_resources <- filter(resources, tolower(format) %in% c('csv', 'geojson'))
+ 
+# load the first datastore resource as a sample
+data <- filter(datastore_resources, row_number()==1) %>% get_resource()
+data
+
+##a histogram of the clothing drop box location street name
+
+df <- data.frame(
+  address=data$Permit_Address_Street_Name
+  )
+
+ggplot(df, aes(x=address)) + geom_bar(stat="count")
+
+
+
+##a frequency table of the clothing drop box location street name
+address=data$Permit_Address_Street_Name
+as.matrix(table(address),row.names = NULL)
+
+##a histogram of the clothing drop box location street name
+
+df <- data.frame(
+  class=data$Permit_Class
+  )
+
+ggplot(df, aes(x=class)) + geom_bar(stat="count")
+class=data$Permit_Class
+##a frequency table of the clothing drop box location street name and permit class
+correlation<-matrix(table(address,class),ncol=2)
+
+colnames(correlation)  <- c("profit","nonprofit")
+correlation
+##creat a new table with street names
+
+new<-as.matrix(table(address))[,0]
+COR<-cbind(correlation,new)
+COR
+
+##plot of street names&permit class correlation
+plot(COR)
+##the street where nonprofit boxes are less than profit boxes
+
+ COR[ (COR[,2]-COR[,1])<=0, ]
+ COR[ (COR[,2]-COR[,1])<=-5, ]
